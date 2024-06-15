@@ -48,10 +48,68 @@
         }
     </style>
     <script>
-        async function generateNewLetter() {
-            const response = await fetch('/generate');
-            const data = await response.json();
-            document.querySelector('.letter-frame').innerHTML = data.letter;
+        function rel(arr, used) {
+            let word;
+            do {
+                word = arr[Math.floor(Math.random() * arr.length)];
+            } while (used.includes(word));
+            used.push(word);
+            return word;
+        }
+
+        function generateLoveLetter() {
+            const sals1 = ["Unsatisfied", "Naughty", "Dear", "Dearest", "Sweet"];
+            const sals2 = ["Master", "Sir", "Girl", "Slut", "You", "Y/N", "Sweetheart"];
+            const adjs = ["tight", "hot", "wet", "naughty", "thick", "sensitive", "plump", "rough", "fucking", "deep", "shaky", "intense", "smooth", "massive", "hard", "passionate", "sexy", "seductive", "sweet", "dirty", "soft", "unsatisfied", "hoarse", "powerful"];
+            const nouns = ["cock", "pussy", "cum", "bed", "mouth", "skin", "orgasm", "finger", "craving", "desire", "voice", "tongue", "ass", "balls", "body", "throat", "pleasure", "heart", "seed", "breast", "chest", "face", "love", "lust", "passion", "breath", "head", "thirst", "pillow"];
+            const advs = ["deeply", "quickly", "intensely", "senselessly", "slowly", "hoarsely", "roughly", "desperately", "nicely", "impatiently", "thoroughly", "lovingly", "passionately", "seductively", "shakily", "softly", "tightly", "sloppily", "shamelessly"];
+            const verbs = ["cums for", "fucks", "moans for", "kisses", "sucks", "drives into", "thrusts into", "whispers", "lusts after", "pants for", "coos for", "licks", "strokes", "thirsts for", "teases", "begs for", "woos"];
+
+            let usedWords = [];
+            let ll = <p>${rel(sals1, usedWords)} ${rel(sals2, usedWords)},</p>\n<p>     ;
+            let last = null;
+
+            for (let i = 0; i < 5; i++) {
+                if (Math.random() < 0.5) {
+                    // LONG
+                    const optadj1 = Math.random() < 0.5 ? '' : rel(adjs, usedWords);
+                    const noun1 = rel(nouns, usedWords);
+                    const optadv = Math.random() < 0.5 ? '' : rel(advs, usedWords);
+                    const verb = rel(verbs, usedWords);
+                    const optadj2 = Math.random() < 0.5 ? '' : rel(adjs, usedWords);
+                    const noun2 = rel(nouns, usedWords);
+
+                    const concat = last !== null ? ". " : "";
+                    ll += ${concat}My ${optadj1} ${noun1} ${optadv} ${verb} your ${optadj2} ${noun2};
+                    last = "LONG";
+                } else {
+                    // SHORT
+                    const adj = rel(adjs, usedWords);
+                    const noun = rel(nouns, usedWords);
+                    let concat;
+                    if (last === "SHORT") {
+                        concat = ", ";
+                    } else if (last === "LONG") {
+                        concat = ". You are";
+                    } else {
+                        concat = "You are ";
+                    }
+                    ll += ${concat} my ${adj} ${noun};
+                    last = "SHORT";
+                }
+            }
+
+            const adv = rel(advs, usedWords);
+            ll += .</p>\n<p>     Yours ${adv},</p>\n<p>     Z.</p>;
+            return ll;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.letter-frame').innerHTML = generateLoveLetter();
+        });
+
+        function generateNewLetter() {
+            document.querySelector('.letter-frame').innerHTML = generateLoveLetter();
         }
     </script>
 </head>
@@ -59,9 +117,7 @@
     <div class="container">
         <h1>Dating apps: First Message Generator</h1>
         <h2>Your guarantee for an interaction*</h2>
-        <div class="letter-frame">
-            {{ love_letter|safe }}
-        </div>
+        <div class="letter-frame"></div>
         <div class="button-container">
             <button class="generate-button" onclick="generateNewLetter()">Generate New Message</button>
         </div>
