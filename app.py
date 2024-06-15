@@ -1,4 +1,4 @@
-import random
+mport random
 from flask import Flask, render_template, jsonify
 
 app = Flask(_name_)
